@@ -6,20 +6,27 @@ var {
   StyleSheet,
   Text,
   View,
-  Image
+  Image,
+  AsyncStorage
+
 } = React;
 
 var OnboardingScreen = require('./OnboardingScreen');
 var HomeScreen = require('./HomeScreen');
+var SplashScreen = require('./SplashScreen');
 
 var reinsureApp = React.createClass({
     getInitialState: function() {
       return {
-        onboardingCompleted: false
+        startScreen: 'SplashScreen'
       }
   },
+  componentDidMount : async function(){
+      setTimeout(this._setScreenByOnboardingStatus, 1500);
+
+  },
   render: function() {
-    if (this.state.onboardingCompleted) {
+    if (this.state.startScreen === 'HomeScreen') {
       return (
           <Image style={styles.container} source={{uri: 'https://misurance.herokuapp.com/images/bg.jpg'}}>
             <HomeScreen
@@ -28,7 +35,7 @@ var reinsureApp = React.createClass({
           </Image>
       );
     }
-    else {
+    else if (this.state.startScreen === 'OnboardingScreen'){
       return (
           <Image style={styles.container} source={{uri: 'https://misurance.herokuapp.com/images/bg.jpg'}}>
             <OnboardingScreen
@@ -39,9 +46,32 @@ var reinsureApp = React.createClass({
 
       );
     }
+    else if (this.state.startScreen === 'SplashScreen'){
+      return (
+          <Image style={styles.container} source={{uri: 'https://misurance.herokuapp.com/images/bg.jpg'}}>
+            <SplashScreen
+              style={{flex: 1}}>
+            </SplashScreen>
+          </Image>
+
+      );
+    }
   },
-  _onboardingCompleted: function(){
-    this.setState({onboardingCompleted: true});
+  _onboardingCompleted: async function(){
+    console.log('_onboardingCompleted');
+    await AsyncStorage.setItem('OnboardingCompleted', 'true');
+
+    console.log('storage set');
+    await this._setScreenByOnboardingStatus();
+  },
+  _setScreenByOnboardingStatus: async function(){
+    var value = await AsyncStorage.getItem('OnboardingCompleted')
+      if (value){
+        this.setState({startScreen: 'HomeScreen'});
+      }
+      else {
+        this.setState({startScreen: 'OnboardingScreen'});
+      }
   }
 });
 
@@ -51,7 +81,6 @@ var styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    resizeMode: 'stretch'
   }
 
 });

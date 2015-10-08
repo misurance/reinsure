@@ -9,7 +9,7 @@ var {
   Text,
   Image,
   View,
-  TouchableHighlight
+  TouchableHighlight,
 } = React;
 var Button = require('apsl-react-native-button');
 
@@ -33,17 +33,18 @@ var OnboardingScreen = React.createClass({
       </View>
     );
   },
-  _handlePress: function() {
+  _handlePress: async function() {
     var self = this;
     braintree.paymentRegistration().
-      doOnNext(function(str){
-        console.log('next - ' + str);
+      doOnNext(async function(str){
         if (str === 'completed'){
-          self.props.completed();
+          await self.props.completed();
         }
       })
       .subscribe();
     braintree.startBraintreeDropIn();
+    // await self.props.completed();
+
   },
 });
 
