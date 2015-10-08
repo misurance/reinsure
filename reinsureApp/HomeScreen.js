@@ -24,16 +24,22 @@ var HomeScreen = React.createClass({
     feed.stream()
     .doOnNext(function(evt){
       var obj = JSON.parse(evt);
+      if (obj.type === 'stateChanged'){
+        self.state.events.unshift(obj);
+        self.setState({events: self.state.events});
+
+      }
+      else if (obj.type === 'updatePremium'){
+        self.setState({premium: obj.premium});
+      }
       console.log(obj);
-      self.state.events.unshift(obj);
-      self.setState({events: self.state.events, premium: self.state.premium + obj.change});
     })
     .subscribe();
 
    feed.start();
   },
   render: function() {
-    var createEventItem = (event) => <Text key={event.key}>{event.time} {event.message}</Text>;
+    var createEventItem = (event) => <Text key  ={event.key}>{event.time} {event.newState}</Text>;
 
     return (
       <View style={styles.container}>
