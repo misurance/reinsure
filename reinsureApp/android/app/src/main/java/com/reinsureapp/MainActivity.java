@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -19,21 +20,34 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.reinsureapp.domain.GpsLocation;
+import com.reinsureapp.telemtries.PositionUpdateTelemetrySender;
+import com.reinsureapp.telemtries.SpeedTelemetrySender;
 
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import remote.android.react.ReactAndroidBridgePackage;
+import rx.Observable;
+import rx.functions.Func2;
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
 
     private ReactInstanceManager mReactInstanceManager;
     private ReactRootView mReactRootView;
+    private Socket mSocket;
+
     public String clientToken;
     public String userId = UUID.randomUUID().toString();
-    //public String userId = "1234";
 
     public BrainTreeService brainTreeService = new BrainTreeService(this);
 
@@ -60,6 +74,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
         setContentView(mReactRootView);
 
+        //get token for braintree
         AsyncHttpClient client = new AsyncHttpClient();
         client.get("https://misurance.herokuapp.com/api/client_token", new TextHttpResponseHandler() {
             @Override
@@ -73,6 +88,32 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 Log.i("MainActivity", "Got token - " + responseString);
             }
         });
+
+        //connect to server socket.io
+        try {
+            mSocket = IO.socket("http://misurance.herokuapp.com");
+            mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    mSocket.emit("start driving", userId);
+
+                    Observable<GpsLocation> locations = new PositionUpdateTelemetrySender(MainActivity.this).start();
+                    Observable<Integer> speeds = new SpeedTelemetrySender().start();
+
+                    Observable.combineLatest(speeds, locations , new Func2<Integer, GpsLocation, Object>() {
+                        @Override
+                        public Object call(Integer speed, GpsLocation location) {
+                            mSocket.emit("position update", new Date(), speed, location);
+                            Log.i("reinsure", "position update: " + speed + ", " + location.latitude + ", " + location.longitude);
+                            return null;
+                        }
+                    }).subscribe();
+                }
+            });
+            mSocket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
