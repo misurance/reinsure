@@ -20,7 +20,10 @@ var OnboardingScreen = React.createClass({
           Welcome to misurance!
         </Text>
         <Text style={styles.subHeader}>
-          Car insurance pricing is almost flat. We offer a solution for pay-as-you-go car insurance. If your car's at rest 6 days a week, you shouldn't pay as much as the guy who's driving to work every day. We're implementing real-time risk analysis algorithms, combined with hardware that''s plugged into your car, to calculate your personalized premium.
+          Hello!
+        </Text>
+        <Text style={styles.subHeader}>
+          Welcome to Misurance, the car insurance that saves you money by presonalizing your premium to your driving habits.
         </Text>
         <Button
            style={styles.button} textStyle={styles.buttonText}
@@ -38,34 +41,33 @@ var OnboardingScreen = React.createClass({
 
 var styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex: 1,
+justifyContent: 'center',
+alignItems: 'center',
     marginLeft: 20,
     marginRight: 20,
+    width:250
     // backgroundColor:'yellow'
   },
   header: {
-    justifyContent: 'center',
     fontSize:32,
-    textAlign:'center'
+    textAlign:'center',
+    marginBottom:20,
 
   },
   subHeader: {
-    marginTop:10,
+    textAlign:'center',
     justifyContent: 'center',
   },
   button: {
     marginTop:30,
-    borderColor: '#8e44ad',
-    backgroundColor: 'white',
-    borderRadius: 0,
-    borderWidth: 3,
+    backgroundColor: 'gray',
+    borderRadius: 20,
+    borderWidth: 0,
+    justifyContent:'center'
   },
   buttonText: {
-    color: '#8e44ad',
-    fontFamily: 'Roboto',
-    fontWeight: 'bold',
-    alignItems: 'center',
+    color:'white',
 
   }
 });
