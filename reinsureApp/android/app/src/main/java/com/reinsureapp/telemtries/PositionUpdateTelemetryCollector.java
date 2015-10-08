@@ -11,13 +11,14 @@ import com.reinsureapp.domain.GpsLocation;
 import java.util.List;
 
 import rx.Observable;
+import rx.subjects.BehaviorSubject;
 import rx.subjects.PublishSubject;
 
 public class PositionUpdateTelemetryCollector {
 
     private Context mContext;
     private LocationListener mLocationListener;
-    private PublishSubject<GpsLocation> mPositions = PublishSubject.create();
+    private BehaviorSubject<GpsLocation> mPositions = BehaviorSubject.create();
 
     public PositionUpdateTelemetryCollector(Context context) {
         mContext = context;
@@ -39,9 +40,11 @@ public class PositionUpdateTelemetryCollector {
         };
 
         List<String> locationProviders = locationManager.getAllProviders();
-        if (locationProviders.contains("gps")) {
+        if (locationProviders.contains("network"))
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+
+        else if (locationProviders.contains("gps"))
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
-        }
 
         return mPositions;
     }

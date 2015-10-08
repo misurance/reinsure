@@ -38,4 +38,5 @@ dependencies {
     compile project(':remote')
     compile project(':remote.android.react')
     compile 'com.firebase:firebase-client-android:2.4.0+'
+    compile 'com.github.pires:obd-java-api:+'
 }
