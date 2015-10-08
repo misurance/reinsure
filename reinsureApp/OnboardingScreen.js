@@ -19,7 +19,7 @@ var OnboardingScreen = React.createClass({
     return (
       <View style={styles.container}>
         <Text style={styles.header}>
-          Welcome to misurance!
+          MISURANCE
         </Text>
         <Text style={styles.subHeader}>
           Hello!
