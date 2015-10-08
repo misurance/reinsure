@@ -16,6 +16,8 @@ import com.facebook.react.ReactRootView;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.shell.MainReactPackage;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.HashMap;
@@ -107,6 +109,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 case BraintreePaymentActivity.RESULT_OK:
                     String paymentMethodNonce = data
                             .getStringExtra(BraintreePaymentActivity.EXTRA_PAYMENT_METHOD_NONCE);
+                    postNonceToServer(paymentMethodNonce);
                     break;
                 case BraintreePaymentActivity.BRAINTREE_RESULT_DEVELOPER_ERROR:
                 case BraintreePaymentActivity.BRAINTREE_RESULT_SERVER_ERROR:
@@ -118,5 +121,25 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                     break;
             }
         }
+    }
+
+    void postNonceToServer(String nonce) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        RequestParams params = new RequestParams();
+        params.put("payment_method_nonce", nonce);
+        client.post("http://5cf168c8.ngrok.io/api/checkout", params,
+                new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+                    }
+                    // Your implementation here
+                }
+        );
     }
 }
