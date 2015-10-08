@@ -8,13 +8,16 @@ var {
   View,
 } = React;
 
+var OnboardingScreen = require('./OnboardingScreen');
+var HomeScreen = require('./HomeScreen');
+
 var reinsureApp = React.createClass({
   render: function() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to reinsure!
-        </Text>
+        <OnboardingScreen
+          style={{flex: 1}}>
+        </OnboardingScreen>
       </View>
     );
   }
@@ -27,11 +30,7 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  }
+
 });
 
 AppRegistry.registerComponent('reinsureApp', () => reinsureApp);
