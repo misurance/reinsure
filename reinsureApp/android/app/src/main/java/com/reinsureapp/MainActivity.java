@@ -54,20 +54,19 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
         setContentView(mReactRootView);
 
-//        AsyncHttpClient client = new AsyncHttpClient();
-//        client.get("https://misurance.herokuapp.com/api/client_token", new TextHttpResponseHandler() {
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//                String t = "";
-//            }
-//
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-//                MainActivity.this.clientToken = responseString;
-//                Log.i("MainActivity", "Got token - " + responseString);
-//            }
-//        });
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get("https://misurance.herokuapp.com/api/client_token", new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                String t = "";
+            }
 
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                MainActivity.this.clientToken = responseString;
+                Log.i("MainActivity", "Got token - " + responseString);
+            }
+        });
     }
 
     @Override
