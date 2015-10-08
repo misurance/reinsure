@@ -23,11 +23,10 @@ var OnboardingScreen = React.createClass({
           Car insurance pricing is almost flat. We offer a solution for pay-as-you-go car insurance. If your car's at rest 6 days a week, you shouldn't pay as much as the guy who's driving to work every day. We're implementing real-time risk analysis algorithms, combined with hardware that''s plugged into your car, to calculate your personalized premium.
         </Text>
         <Button
-           style={styles.button} textStyle={styles.buttonTet}
+           style={styles.button} textStyle={styles.buttonText}
            onPress={() => {
             console.log('world!')
-          }}>
-            Connect with Braintree
+          }}>Connect with Braintree
          </Button>
       </View>
     );
@@ -47,7 +46,8 @@ var styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'center',
-    fontSize:32
+    fontSize:32,
+    textAlign:'center'
 
   },
   subHeader: {
@@ -60,13 +60,13 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 0,
     borderWidth: 3,
-
-
   },
   buttonText: {
     color: '#8e44ad',
     fontFamily: 'Roboto',
     fontWeight: 'bold',
+    alignItems: 'center',
+
   }
 });
 
