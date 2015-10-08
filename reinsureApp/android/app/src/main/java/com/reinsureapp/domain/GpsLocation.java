@@ -2,6 +2,7 @@ package com.reinsureapp.domain;
 
 
 public class GpsLocation {
+    public boolean isEmpty = false;
     public Double longitude;
     public Double latitude;
 

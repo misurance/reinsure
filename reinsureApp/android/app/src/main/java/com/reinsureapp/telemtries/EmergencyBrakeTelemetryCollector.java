@@ -6,11 +6,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-public class EmergencyBrakeTelemetrySender {
+public class EmergencyBrakeTelemetryCollector {
 
     private Context mContext;
 
-    public EmergencyBrakeTelemetrySender(Context context) {
+    public EmergencyBrakeTelemetryCollector(Context context) {
         mContext = context;
     }
 

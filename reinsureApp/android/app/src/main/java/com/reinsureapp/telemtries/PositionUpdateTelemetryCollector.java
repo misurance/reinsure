@@ -8,16 +8,18 @@ import android.os.Bundle;
 
 import com.reinsureapp.domain.GpsLocation;
 
+import java.util.List;
+
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
-public class PositionUpdateTelemetrySender {
+public class PositionUpdateTelemetryCollector {
 
     private Context mContext;
     private LocationListener mLocationListener;
     private PublishSubject<GpsLocation> mPositions = PublishSubject.create();
 
-    public PositionUpdateTelemetrySender(Context context) {
+    public PositionUpdateTelemetryCollector(Context context) {
         mContext = context;
     }
 
@@ -36,7 +38,11 @@ public class PositionUpdateTelemetrySender {
             public void onProviderDisabled(String provider) {}
         };
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+        List<String> locationProviders = locationManager.getAllProviders();
+        if (locationProviders.contains("gps")) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+        }
+
         return mPositions;
     }
 

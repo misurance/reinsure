@@ -3,14 +3,10 @@ package com.reinsureapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
 
-import com.braintreepayments.api.Braintree;
 import com.braintreepayments.api.dropin.BraintreePaymentActivity;
-import com.braintreepayments.api.models.PaymentMethod;
 import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
@@ -22,12 +18,10 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.reinsureapp.domain.GpsLocation;
-import com.reinsureapp.telemtries.PositionUpdateTelemetrySender;
-import com.reinsureapp.telemtries.SpeedTelemetrySender;
+import com.reinsureapp.telemtries.PositionUpdateTelemetryCollector;
+import com.reinsureapp.telemtries.SpeedTelemetryCollector;
 
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -90,8 +84,8 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
             }
         });
 
-        final Observable<GpsLocation> locations = new PositionUpdateTelemetrySender(MainActivity.this).start();
-        final Observable<Integer> speeds = new SpeedTelemetrySender().start();
+        final Observable<GpsLocation> locations = new PositionUpdateTelemetryCollector(MainActivity.this).start();
+        final Observable<Integer> speeds = new SpeedTelemetryCollector().start();
 
         //connect to server socket.io
         try {
