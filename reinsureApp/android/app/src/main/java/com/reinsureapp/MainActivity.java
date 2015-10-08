@@ -16,6 +16,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.shell.MainReactPackage;
+import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -89,22 +90,21 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
             }
         });
 
+        final Observable<GpsLocation> locations = new PositionUpdateTelemetrySender(MainActivity.this).start();
+        final Observable<Integer> speeds = new SpeedTelemetrySender().start();
+
         //connect to server socket.io
         try {
-            mSocket = IO.socket("http://misurance.herokuapp.com");
+            mSocket = IO.socket("http://0aca3db5.ngrok.io");
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
                     mSocket.emit("start driving", userId, UUID.randomUUID().toString());
-
-                    Observable<GpsLocation> locations = new PositionUpdateTelemetrySender(MainActivity.this).start();
-                    Observable<Integer> speeds = new SpeedTelemetrySender().start();
-
                     Observable.combineLatest(speeds, locations , new Func2<Integer, GpsLocation, Object>() {
                         @Override
                         public Object call(Integer speed, GpsLocation location) {
-                            mSocket.emit("position update", new Date(), speed, location);
-                            Log.i("reinsure", "position update: " + speed + ", " + location.latitude + ", " + location.longitude);
+                            mSocket.emit("position update", new Date(), speed, new Gson().toJson(location));
+                            Log.i("MainActivity", "position update: " + speed + ", " + location.latitude + ", " + location.longitude);
                             return null;
                         }
                     }).subscribe();
