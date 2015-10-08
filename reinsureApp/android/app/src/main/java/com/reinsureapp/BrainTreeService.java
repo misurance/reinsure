@@ -4,19 +4,34 @@ import android.content.Intent;
 
 import com.braintreepayments.api.dropin.BraintreePaymentActivity;
 
+import java.util.Observable;
+
+import rx.Subscriber;
+import rx.subjects.PublishSubject;
+
 public class BrainTreeService {
 
     private MainActivity mMainActivity;
-
+    public PublishSubject<String> paymentRegistrationSubject;
     public BrainTreeService(MainActivity mainActivity) {
 
         mMainActivity = mainActivity;
+        paymentRegistrationSubject = PublishSubject.create();
     }
 
     public void startBraintreeDropIn() {
+        paymentRegistrationSubject.onNext("start");
         Intent intent = new Intent(mMainActivity, BraintreePaymentActivity.class);
         intent.putExtra(BraintreePaymentActivity.EXTRA_CLIENT_TOKEN, "eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiIxYTI4M2I2YTQ2MTVmYmYzODZmMDkyNDFmOTg3YzEzNDliM2U1NjA0OWZjYzQ0M2QzYzM1NDRjYzc4YjAzZGMyfGNyZWF0ZWRfYXQ9MjAxNS0xMC0wOFQxMToyOToyNC4wMDY0NjA1OTkrMDAwMFx1MDAyNm1lcmNoYW50X2lkPXc3dnBxbnQ5YmZnYjY4aHJcdTAwMjZwdWJsaWNfa2V5PXB2MzU2eWptNnp4aGZjZ2YiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvdzd2cHFudDliZmdiNjhoci9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJjaGFsbGVuZ2VzIjpbXSwiZW52aXJvbm1lbnQiOiJzYW5kYm94IiwiY2xpZW50QXBpVXJsIjoiaHR0cHM6Ly9hcGkuc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbTo0NDMvbWVyY2hhbnRzL3c3dnBxbnQ5YmZnYjY4aHIvY2xpZW50X2FwaSIsImFzc2V0c1VybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXV0aFVybCI6Imh0dHBzOi8vYXV0aC52ZW5tby5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIiwiYW5hbHl0aWNzIjp7InVybCI6Imh0dHBzOi8vY2xpZW50LWFuYWx5dGljcy5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tIn0sInRocmVlRFNlY3VyZUVuYWJsZWQiOmZhbHNlLCJwYXlwYWxFbmFibGVkIjp0cnVlLCJwYXlwYWwiOnsiZGlzcGxheU5hbWUiOiJNaXN1cmFuY2UiLCJjbGllbnRJZCI6bnVsbCwicHJpdmFjeVVybCI6Imh0dHA6Ly9leGFtcGxlLmNvbS9wcCIsInVzZXJBZ3JlZW1lbnRVcmwiOiJodHRwOi8vZXhhbXBsZS5jb20vdG9zIiwiYmFzZVVybCI6Imh0dHBzOi8vYXNzZXRzLmJyYWludHJlZWdhdGV3YXkuY29tIiwiYXNzZXRzVXJsIjoiaHR0cHM6Ly9jaGVja291dC5wYXlwYWwuY29tIiwiZGlyZWN0QmFzZVVybCI6bnVsbCwiYWxsb3dIdHRwIjp0cnVlLCJlbnZpcm9ubWVudE5vTmV0d29yayI6dHJ1ZSwiZW52aXJvbm1lbnQiOiJvZmZsaW5lIiwidW52ZXR0ZWRNZXJjaGFudCI6ZmFsc2UsImJyYWludHJlZUNsaWVudElkIjoibWFzdGVyY2xpZW50MyIsImJpbGxpbmdBZ3JlZW1lbnRzRW5hYmxlZCI6bnVsbCwibWVyY2hhbnRBY2NvdW50SWQiOiJtaXN1cmFuY2UiLCJjdXJyZW5jeUlzb0NvZGUiOiJVU0QifSwiY29pbmJhc2VFbmFibGVkIjpmYWxzZSwibWVyY2hhbnRJZCI6Inc3dnBxbnQ5YmZnYjY4aHIiLCJ2ZW5tbyI6Im9mZiJ9");
 
         mMainActivity.startActivityForResult(intent, 12345);
+    }
+
+    public void paymentRegistrationCompleted(){
+        paymentRegistrationSubject.onNext("completed");
+    }
+
+    public PublishSubject<String> paymentRegistration(){
+        return paymentRegistrationSubject;
     }
 }

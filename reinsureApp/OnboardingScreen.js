@@ -28,19 +28,24 @@ var OnboardingScreen = React.createClass({
         </Text>
         <Button
           style={styles.button} textStyle={styles.buttonText}
-          onPress={() => {
-            console.log('world!')
-            braintree.startBraintreeDropIn();
-          }}>Connect with Braintree
+          onPress={this._handlePress}>Connect with Braintree
         </Button>
       </View>
     );
   },
   _handlePress: function() {
-    console.log('button clicked');
+    var self = this;
+    braintree.paymentRegistration().
+      doOnNext(function(str){
+        console.log('next - ' + str);
+        if (str === 'completed'){
+          self.props.completed();
+        }
+      })
+      .subscribe();
+    braintree.startBraintreeDropIn();
   },
 });
-console.log(require('image!logo'));
 
 var styles = StyleSheet.create({
   container: {

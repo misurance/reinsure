@@ -9,6 +9,7 @@
     "apsl-react-native-button": "^2.0.0",
     "react-native": "^0.11.4",
     "react-native-button": "^1.2.1",
-    "remote-js": "0.0.7"
+    "remote-js": "0.0.7",
+    "rx": "^4.0.0"
   }
 }
