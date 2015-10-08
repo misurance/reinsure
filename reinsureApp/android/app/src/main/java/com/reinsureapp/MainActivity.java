@@ -35,6 +35,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
     public String userId = UUID.randomUUID().toString();
     //public String userId = "1234";
 
+    public BrainTreeService brainTreeService = new BrainTreeService(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
         mReactRootView = new ReactRootView(this);
 
         Map<String, Object> services = new HashMap<>();
-        services.put("braintree", new BrainTreeService(this));
+        services.put("braintree", brainTreeService);
 
         mReactInstanceManager = ReactInstanceManager.builder()
                 .setApplication(getApplication())
@@ -145,5 +146,6 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                     // Your implementation here
                 }
         );
+        brainTreeService.paymentRegistrationCompleted();
     }
 }
