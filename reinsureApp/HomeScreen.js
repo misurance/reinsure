@@ -9,7 +9,7 @@ var {
   Text,
   View,
 } = React;
-var events  = require('./events');
+var feed  = require('./feed');
 
 var HomeScreen = React.createClass({
   getInitialState: function(){
@@ -21,7 +21,7 @@ var HomeScreen = React.createClass({
   },
   componentDidMount: function(){
     var self = this;
-    events.stream()
+    feed.stream()
     .doOnNext(function(evt){
       var obj = JSON.parse(evt);
       console.log(obj);
@@ -30,7 +30,7 @@ var HomeScreen = React.createClass({
     })
     .subscribe();
 
-   events.start();
+   feed.start();
   },
   render: function() {
     var createEventItem = (event) => <Text key={event.key}>{event.time} {event.message}</Text>;

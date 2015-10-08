@@ -18,20 +18,20 @@ import rx.subjects.PublishSubject;
 /**
  * Created by talarari on 10/8/15.
  */
-public class EventsService {
+public class FeedService {
     private PublishSubject<String> eventsSubject = PublishSubject.create();
     Firebase ref;
     ChildEventListener eventListener;
-    public EventsService(Context context){
+    public FeedService(Context context, String userId){
         Firebase.setAndroidContext(context);
-        ref = new Firebase("https://intense-inferno-8553.firebaseio.com").child("events");
+        ref = new Firebase("https://intense-inferno-8553.firebaseio.com").child(userId).child("feed");
         eventListener = new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 HashMap<String,String> value = (HashMap<String,String>)dataSnapshot.getValue();
                 String key = dataSnapshot.getKey();
-                value.put("key",key);
+                value.put("key", key);
                 eventsSubject.onNext(new JSONObject(value).toString());
 
             }

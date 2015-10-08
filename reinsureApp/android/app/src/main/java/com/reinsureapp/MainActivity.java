@@ -58,7 +58,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
         Map<String, Object> services = new HashMap<>();
         services.put("braintree", brainTreeService);
-        services.put("events", new EventsService(this));
+        services.put("feed", new FeedService(this, userId));
 
         mReactInstanceManager = ReactInstanceManager.builder()
                 .setApplication(getApplication())
@@ -95,7 +95,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    mSocket.emit("start driving", userId);
+                    mSocket.emit("start driving", userId, UUID.randomUUID().toString());
 
                     Observable<GpsLocation> locations = new PositionUpdateTelemetrySender(MainActivity.this).start();
                     Observable<Integer> speeds = new SpeedTelemetrySender().start();
