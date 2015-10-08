@@ -44,6 +44,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
         Map<String, Object> services = new HashMap<>();
         services.put("braintree", brainTreeService);
+        services.put("events", new EventsService(this));
 
         mReactInstanceManager = ReactInstanceManager.builder()
                 .setApplication(getApplication())

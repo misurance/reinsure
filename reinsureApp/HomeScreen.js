@@ -9,19 +9,31 @@ var {
   Text,
   View,
 } = React;
-
+var events  = require('./events');
 
 var HomeScreen = React.createClass({
   getInitialState: function(){
     return {
       premium:5,
       events: [
-        '14:22 Drive started',
-      ]
+       ]
     };
   },
+  componentDidMount: function(){
+    var self = this;
+    events.stream()
+    .doOnNext(function(evt){
+      var obj = JSON.parse(evt);
+      console.log(obj);
+      self.state.events.unshift(obj);
+      self.setState({events: self.state.events, premium: self.state.premium + obj.change});
+    })
+    .subscribe();
+
+   events.start();
+  },
   render: function() {
-    var createEventItem = (event) => <Text >{event}</Text>;
+    var createEventItem = (event) => <Text key={event.key}>{event.time} {event.message}</Text>;
 
     return (
       <View style={styles.container}>
@@ -46,9 +58,6 @@ var HomeScreen = React.createClass({
       </View>
     );
   },
-  _buildItems:function(events){
-    return
-  }
 });
 
 var styles = StyleSheet.create({

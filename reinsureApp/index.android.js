@@ -22,7 +22,7 @@ var reinsureApp = React.createClass({
       }
   },
   componentDidMount : async function(){
-      setTimeout(this._setScreenByOnboardingStatus, 1500);
+      setTimeout(this._setScreenByOnboardingStatus, 0);
 
   },
   render: function() {
