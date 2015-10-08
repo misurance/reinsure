@@ -22,6 +22,7 @@ import com.loopj.android.http.TextHttpResponseHandler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import cz.msebera.android.httpclient.Header;
 import remote.android.react.ReactAndroidBridgePackage;
@@ -31,6 +32,9 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
     private ReactInstanceManager mReactInstanceManager;
     private ReactRootView mReactRootView;
     public String clientToken;
+    public String userId = UUID.randomUUID().toString();
+    //public String userId = "1234";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,8 +129,9 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
     void postNonceToServer(String nonce) {
         AsyncHttpClient client = new AsyncHttpClient();
         RequestParams params = new RequestParams();
-        params.put("payment_method_nonce", nonce);
-        client.post("http://5cf168c8.ngrok.io/api/checkout", params,
+        params.put("userId", userId);
+        params.put("nonce", nonce);
+        client.post("https://misurance.herokuapp.com/api/create_customer", params,
                 new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {

@@ -29,9 +29,8 @@ var OnboardingScreen = React.createClass({
         </Text>
         <Button
            style={styles.button} textStyle={styles.buttonText}
-           onPress={() => {
-            console.log('world!')
-            braintree.startBraintreeDropIn();
+           onPress={async () => {
+             await braintree.startBraintreeDropIn();
           }}>Connect with Braintree
          </Button>
       </View>
