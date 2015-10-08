@@ -12,6 +12,8 @@ var {
 } = React;
 var Button = require('apsl-react-native-button');
 
+var braintree = require('./braintree');
+
 var OnboardingScreen = React.createClass({
   render: function() {
     return (
@@ -29,6 +31,7 @@ var OnboardingScreen = React.createClass({
            style={styles.button} textStyle={styles.buttonText}
            onPress={() => {
             console.log('world!')
+            braintree.startBraintreeDropIn();
           }}>Connect with Braintree
          </Button>
       </View>
