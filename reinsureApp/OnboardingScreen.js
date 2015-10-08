@@ -10,7 +10,7 @@ var {
   View,
   TouchableHighlight
 } = React;
-var Button = require('react-native-button');
+var Button = require('apsl-react-native-button');
 
 var OnboardingScreen = React.createClass({
   render: function() {
@@ -22,9 +22,13 @@ var OnboardingScreen = React.createClass({
         <Text style={styles.subHeader}>
           Car insurance pricing is almost flat. We offer a solution for pay-as-you-go car insurance. If your car's at rest 6 days a week, you shouldn't pay as much as the guy who's driving to work every day. We're implementing real-time risk analysis algorithms, combined with hardware that''s plugged into your car, to calculate your personalized premium.
         </Text>
-        <Button style={styles.button} onPress={this._handlePress}>
-          Connect with braintree
-        </Button>
+        <Button
+           style={styles.button} textStyle={styles.buttonTet}
+           onPress={() => {
+            console.log('world!')
+          }}>
+            Connect with Braintree
+         </Button>
       </View>
     );
   },
@@ -35,8 +39,10 @@ var OnboardingScreen = React.createClass({
 
 var styles = StyleSheet.create({
   container: {
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    marginLeft: 20,
+    marginRight: 20,
     // backgroundColor:'yellow'
   },
   header: {
@@ -49,7 +55,18 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
   },
   button: {
-    marginTop:30
+    marginTop:30,
+    borderColor: '#8e44ad',
+    backgroundColor: 'white',
+    borderRadius: 0,
+    borderWidth: 3,
+
+
+  },
+  buttonText: {
+    color: '#8e44ad',
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
   }
 });
 
