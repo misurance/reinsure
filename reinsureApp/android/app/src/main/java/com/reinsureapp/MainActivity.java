@@ -95,7 +95,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
 
         //connect to server socket.io
         try {
-            mSocket = IO.socket("http://0aca3db5.ngrok.io");
+            mSocket = IO.socket("http://misurance.herokuapp.com");
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
