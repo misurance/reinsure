@@ -43,8 +43,6 @@ var OnboardingScreen = React.createClass({
       })
       .subscribe();
     braintree.startBraintreeDropIn();
-    // await self.props.completed();
-
   },
 });
 
