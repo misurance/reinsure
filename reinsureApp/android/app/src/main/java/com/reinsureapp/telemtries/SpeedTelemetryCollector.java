@@ -3,6 +3,7 @@ package com.reinsureapp.telemtries;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.util.Log;
 
 import com.github.pires.obd.commands.SpeedCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
@@ -34,12 +35,25 @@ public class SpeedTelemetryCollector {
                 final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
                 final Object[] devices = btAdapter.getBondedDevices().toArray();
                 BluetoothSocket socket;
-                try {
-                    socket = ((BluetoothDevice) devices[0]).createRfcommSocketToServiceRecord(MY_UUID);
-                    socket.connect();
-                    subscriber.onNext(socket);
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                while (true) {
+                    try {
+                        Log.i("SpeedTelemetryCollector", "statring connection to bluetooth");
+
+                        socket = ((BluetoothDevice) devices[0]).createRfcommSocketToServiceRecord(MY_UUID);
+                        socket.connect();
+                        Log.i("SpeedTelemetryCollector", "connected to bluetooth!");
+
+                        subscriber.onNext(socket);
+                        break;
+                    } catch (Exception e) {
+                        Log.i("SpeedTelemetryCollector", "connecting to bluetooth..");
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
                 }
             }
         })
@@ -65,6 +79,6 @@ public class SpeedTelemetryCollector {
                     }
                 });
             }
-        }).retryWhen(new RetryWithDelay(3, 2000));
+        });
     }
 }

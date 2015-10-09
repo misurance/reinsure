@@ -30,7 +30,7 @@ var HomeScreen = React.createClass({
 
       }
       else if (obj.type === 'updatePremium'){
-        self.setState({premium: obj.premium.toFixed(1)});
+        self.setState({premium: (obj.premium/700).toFixed(2)});
       }
       console.log(obj);
     })

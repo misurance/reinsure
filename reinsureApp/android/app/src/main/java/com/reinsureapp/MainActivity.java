@@ -18,6 +18,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.reinsureapp.domain.GpsLocation;
+import com.reinsureapp.telemtries.FakeLocationTelemetryCollector;
 import com.reinsureapp.telemtries.PositionUpdateTelemetryCollector;
 import com.reinsureapp.telemtries.SpeedTelemetryCollector;
 
@@ -26,6 +27,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import cz.msebera.android.httpclient.Header;
 import io.socket.client.IO;
@@ -44,7 +46,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
     private Socket mSocket;
 
     public String clientToken;
-    public String userId = UUID.randomUUID().toString();
+    public String userId = "Asaf";
 
     public BrainTreeService brainTreeService = new BrainTreeService(this);
 
@@ -86,23 +88,33 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
             }
         });
 
-        final Observable<GpsLocation> locations = new PositionUpdateTelemetryCollector(MainActivity.this).start();
+        //final Observable<GpsLocation> locations = new PositionUpdateTelemetryCollector(MainActivity.this).start();
         final Observable<Integer> speeds = new SpeedTelemetryCollector().start();
+        final Observable<GpsLocation> locations = new FakeLocationTelemetryCollector().start();
+
 
         //connect to server socket.io
         try {
+            Log.i("MainActivity", "connecting to socket.io");
             mSocket = IO.socket("http://misurance.herokuapp.com");
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
                     try {
-                        mSocket.emit("start driving", userId, UUID.randomUUID().toString());
+                        final boolean[] firstTime = {true};
+                        Log.i("MainActivity", "connected to socket.io!");
                         Observable.combineLatest(speeds, locations.startWith(new GpsLocation()), new Func2<Integer, GpsLocation, Object>() {
                             @Override
                             public Object call(Integer speed, GpsLocation location) {
-                                if (location.isEmpty) return null;
-                                mSocket.emit("position update", new Date(), speed, new Gson().toJson(location));
+                                if (firstTime[0]) {
+                                    mSocket.emit("start driving", userId, UUID.randomUUID().toString());
+                                    firstTime[0] = false;
+                                }
                                 Log.i("MainActivity", "position update: " + speed + ", " + location.latitude + ", " + location.longitude);
+                                if (location.isEmpty)
+                                    return null;
+
+                                mSocket.emit("position update", new Date(), speed, new Gson().toJson(location));
                                 return null;
                             }
                         }).subscribeOn(Schedulers.io()).subscribe();

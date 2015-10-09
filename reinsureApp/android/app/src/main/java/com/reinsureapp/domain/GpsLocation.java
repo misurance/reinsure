@@ -12,7 +12,6 @@ public class GpsLocation {
     }
 
     public GpsLocation() {
-
-
+        isEmpty = true;
     }
 }
