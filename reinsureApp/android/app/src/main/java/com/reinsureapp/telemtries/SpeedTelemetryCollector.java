@@ -6,7 +6,11 @@ import android.bluetooth.BluetoothSocket;
 
 import com.github.pires.obd.commands.SpeedCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
+import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.ObdResetCommand;
+import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
+import com.github.pires.obd.commands.protocol.TimeoutCommand;
+import com.github.pires.obd.enums.ObdProtocols;
 import com.reinsureapp.RetryWithDelay;
 
 import java.io.IOException;
@@ -14,6 +18,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.Subscriber;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -33,11 +38,11 @@ public class SpeedTelemetryCollector {
                     socket = ((BluetoothDevice) devices[0]).createRfcommSocketToServiceRecord(MY_UUID);
                     socket.connect();
                     subscriber.onNext(socket);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        }).subscribeOn(Schedulers.newThread())
+        })
         .flatMap(new Func1<BluetoothSocket, Observable<Integer>>() {
             @Override
             public Observable<Integer> call(final BluetoothSocket bluetoothSocket) {
@@ -47,7 +52,6 @@ public class SpeedTelemetryCollector {
                         try {
                             new ObdResetCommand().run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
                             new EchoOffCommand().run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
-
                             SpeedCommand speedCommand = new SpeedCommand();
                             speedCommand.run(bluetoothSocket.getInputStream(), bluetoothSocket.getOutputStream());
                             int speed = speedCommand.getMetricSpeed();

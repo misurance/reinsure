@@ -33,7 +33,9 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import remote.android.react.ReactAndroidBridgePackage;
 import rx.Observable;
+import rx.Scheduler;
 import rx.functions.Func2;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
 
@@ -93,15 +95,21 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
             mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    mSocket.emit("start driving", userId, UUID.randomUUID().toString());
-                    Observable.combineLatest(speeds, locations , new Func2<Integer, GpsLocation, Object>() {
-                        @Override
-                        public Object call(Integer speed, GpsLocation location) {
-                            mSocket.emit("position update", new Date(), speed, new Gson().toJson(location));
-                            Log.i("MainActivity", "position update: " + speed + ", " + location.latitude + ", " + location.longitude);
-                            return null;
-                        }
-                    }).subscribe();
+                    try {
+                        mSocket.emit("start driving", userId, UUID.randomUUID().toString());
+                        Observable.combineLatest(speeds, locations.startWith(new GpsLocation()), new Func2<Integer, GpsLocation, Object>() {
+                            @Override
+                            public Object call(Integer speed, GpsLocation location) {
+                                if (location.isEmpty) return null;
+                                mSocket.emit("position update", new Date(), speed, new Gson().toJson(location));
+                                Log.i("MainActivity", "position update: " + speed + ", " + location.latitude + ", " + location.longitude);
+                                return null;
+                            }
+                        }).subscribeOn(Schedulers.io()).subscribe();
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             mSocket.connect();

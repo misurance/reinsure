@@ -10,4 +10,9 @@ public class GpsLocation {
         this.longitude = longitude;
         this.latitude = latitude;
     }
+
+    public GpsLocation() {
+
+
+    }
 }

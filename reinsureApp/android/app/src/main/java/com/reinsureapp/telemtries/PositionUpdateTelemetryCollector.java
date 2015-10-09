@@ -11,6 +11,7 @@ import com.reinsureapp.domain.GpsLocation;
 import java.util.List;
 
 import rx.Observable;
+import rx.Scheduler;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
@@ -27,36 +28,33 @@ public class PositionUpdateTelemetryCollector {
     }
 
     public Observable<GpsLocation> start() {
-        return Observable.just(null).subscribeOn(Schedulers.newThread()).flatMap(new Func1<Object, Observable<GpsLocation>>() {
-            @Override
-            public Observable<GpsLocation> call(Object o) {
-                LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 
-                mLocationListener = new LocationListener() {
-                    public void onLocationChanged(Location location) {
-                        mPositions.onNext(new GpsLocation(location.getLongitude(), location.getLatitude()));
-                    }
-
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                    }
-
-                    public void onProviderEnabled(String provider) {
-                    }
-
-                    public void onProviderDisabled(String provider) {
-                    }
-                };
-
-                List<String> locationProviders = locationManager.getAllProviders();
-                if (locationProviders.contains("network"))
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
-
-                else if (locationProviders.contains("gps"))
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
-
-                return mPositions;
+        mLocationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                mPositions.onNext(new GpsLocation(location.getLongitude(), location.getLatitude()));
             }
-        });
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        List<String> locationProviders = locationManager.getAllProviders();
+        if (locationProviders.contains("network"))
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+
+        else if (locationProviders.contains("gps"))
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, mLocationListener);
+
+        return mPositions;
+
+
     }
 
     public void stop() {
